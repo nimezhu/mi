@@ -4,20 +4,6 @@ import (
 	"math"
 )
 
-/*
-type pwm struct {
-	Id  string
-	Mat [][]float64
-}
-
-type bg struct {
-	Vector []float64
-}
-
-func Distance(m1 *pwm, m2 *pwm, bg *bg) float64 {
-	return 0.0
-}
-*/
 func addBg(mat [][]float64, bg []float64) [][]float64 {
 	l1 := len(mat)
 	m1 := make([][]float64, l1+2)
