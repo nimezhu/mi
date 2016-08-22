@@ -1,5 +1,7 @@
 package mi
-
+const (
+	VERSION = "testing"
+)
 import (
 	"math"
 )
