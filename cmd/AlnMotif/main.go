@@ -7,7 +7,7 @@ import (
 	"os"
 	//"strings"
 
-	"../"
+	"github.com/nimezhu/mi"
 )
 
 func main() {

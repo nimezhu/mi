@@ -5,31 +5,25 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
+	"path"
 
-	"../"
+	"github.com/nimezhu/mi"
+)
+
+const (
+	program = "DirToDivmat"
 )
 
 func main() {
-	//files, _ := ioutil.ReadDir("./data")
-	if len(os.Args) < 3 {
-		log.Fatal("ListToDivmat2 file.list file.db")
+	if len(os.Args) < 2 {
+		log.Fatal("DirToDivmat dir(which store motif files)")
+
 	}
+	files, _ := ioutil.ReadDir(os.Args[1])
 	bg := []float64{0.2, 0.3, 0.3, 0.2}
 	motifs := make([]*mi.Motif, 0)
-	e, _ := ioutil.ReadFile(os.Args[1])
-	enriched := strings.Split(string(e), "\n")
-	//fmt.Println(enriched)
-	db, err := mi.OpenDb(os.Args[2])
-	if err != nil {
-		panic(err)
-	}
-	for _, f := range enriched {
-		if f == "" {
-			continue
-		}
-		m := new(mi.Motif)
-		m.LoadFromDb(db, f)
+	for _, f := range files {
+		m := mi.LoadMotifFile(path.Join(os.Args[1], f.Name()))
 		motifs = append(motifs, m)
 	}
 	l := len(motifs)

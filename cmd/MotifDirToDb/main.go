@@ -6,7 +6,7 @@ import (
 	"os"
 	"path"
 
-	"../"
+	"github.com/nimezhu/mi"
 )
 
 var (
