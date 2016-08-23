@@ -51,7 +51,7 @@ func checkErr(err error) {
 		panic(err)
 	}
 }
-func CmdAln(c *cli.Context) {
+func CmdAln(c *cli.Context) error {
 	if c.NArg() < 3 {
 		log.Fatal("align MotifAName MotifBName file.db")
 	}
@@ -67,9 +67,10 @@ func CmdAln(c *cli.Context) {
 	err = m2.LoadFromDb(db, c.Args().Get(1))
 	checkErr(err)
 	fmt.Println(mi.MotifJsAlnReport(m1.Pwm, m2.Pwm, bg))
+	return nil
 }
 
-func CmdLoadDirToDb(c *cli.Context) {
+func CmdLoadDirToDb(c *cli.Context) error {
 	if c.NArg() < 2 {
 		log.Fatal("loaddir dir file.db")
 	}
@@ -86,28 +87,33 @@ func CmdLoadDirToDb(c *cli.Context) {
 		log.Println("load " + m.Id)
 
 	}
+	return nil
 }
 
-func CmdDivmat(c *cli.Context) {
-	if c.NArg() < 2 {
-		log.Fatal("divmat file.db file.list")
+func CmdDivmat(c *cli.Context) error {
+	if c.NArg() < 1 {
+		log.Fatal("divmat file.db file.txt[selected motif names]")
 	}
 	bg := []float64{0.2, 0.3, 0.3, 0.2}
 	motifs := make([]*mi.Motif, 0)
-	e, _ := ioutil.ReadFile(c.Args().Get(1))
-	enriched := strings.Split(string(e), "\n")
-	//fmt.Println(enriched)
 	db, err := mi.OpenDb(c.Args().Get(0))
 	if err != nil {
 		panic(err)
 	}
-	for _, f := range enriched {
-		if f == "" {
-			continue
+
+	if c.NArg() == 1 {
+		motifs = mi.IterDb(db)
+	} else {
+		e, _ := ioutil.ReadFile(c.Args().Get(1))
+		selected := strings.Split(string(e), "\n")
+		for _, f := range selected {
+			if f == "" {
+				continue
+			}
+			m := new(mi.Motif)
+			m.LoadFromDb(db, f)
+			motifs = append(motifs, m)
 		}
-		m := new(mi.Motif)
-		m.LoadFromDb(db, f)
-		motifs = append(motifs, m)
 	}
 	l := len(motifs)
 	fmt.Println(l)
@@ -124,5 +130,6 @@ func CmdDivmat(c *cli.Context) {
 		}
 		fmt.Println("")
 	}
+	return nil
 
 }
