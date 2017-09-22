@@ -2,6 +2,7 @@ package mi
 
 import (
 	//"os"
+	"fmt"
 	"testing"
 )
 
@@ -125,4 +126,15 @@ func TestMotifAln2(t *testing.T) {
 	t.Log(MotifJsAlnReport(m2, m1, bg))
 	t.Log(MotifJsAlnReport(m1, m2, bg))
 	t.Log(score, offset)
+}
+
+func TestReadEncode(t *testing.T) {
+	motifs, err := ReadEncodeMotifs("http://compbio.mit.edu/encode-motifs/motifs.txt")
+	if err != nil {
+		t.Error(err)
+	}
+
+	for _, v := range motifs {
+		fmt.Println(v.TxtEncode())
+	}
 }
