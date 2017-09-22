@@ -49,13 +49,23 @@ func CmdDivmat(c *cli.Context) error {
 	for _, m := range motifs {
 		fmt.Printf("\t%s", m.Id)
 	}
-	for _, im := range motifs {
-		fmt.Printf("%s", im.Id)
-		for _, jm := range motifs {
-			d := mi.MotifJsDiv(im.Pwm, jm.Pwm, bg)
-			fmt.Printf("\t%f", d)
+	fmt.Printf("\n")
+	l := len(motifs)
+	matarray := make([]float64, l*l)
+	for i := 0; i < len(motifs); i++ {
+		matarray[i*l+i] = float64(0.0)
+		for j := i + 1; j < len(motifs); j++ {
+			v := mi.MotifJsDiv(motifs[i].Pwm, motifs[j].Pwm, bg)
+			matarray[i*l+j] = v
+			matarray[j*l+i] = v
 		}
-		fmt.Println("")
+	}
+	for i := 0; i < len(motifs); i++ {
+		fmt.Printf("%s", motifs[i].Id)
+		for j := 0; j < len(motifs); j++ {
+			fmt.Printf("\t%f", matarray[i*l+j])
+		}
+		fmt.Printf("\n")
 	}
 	return nil
 
