@@ -1,7 +1,8 @@
 package mi
 
 import (
-	"os"
+	//"os"
+	"fmt"
 	"testing"
 )
 
@@ -59,6 +60,8 @@ func TestMotifJsDiv(t *testing.T) {
 	t.Log("Distance", MotifJsDiv(m1, m1, b1))
 	t.Log("Distance A to T", MotifJsDiv(m3, m4, b2))
 }
+
+/*
 func TestReadMotif(t *testing.T) {
 	ml1 := LoadMotifFile("../data/M3624_1.02.txt")
 	ml2 := LoadMotifFile("../data/M3625_1.02.txt")
@@ -68,11 +71,14 @@ func TestReadMotif(t *testing.T) {
 	m2, _ := ml2.TxtEncode()
 	t.Log(m2)
 }
+*/
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
+
+/*
 func TestMotifDb(t *testing.T) {
 	ml1 := LoadMotifFile("../data/M3624_1.02.txt")
 	ml2 := LoadMotifFile("../data/M3625_1.02.txt")
@@ -100,7 +106,8 @@ func TestMotifDb(t *testing.T) {
 	os.Remove("test.db")
 
 }
-
+*/
+/*
 func TestMotifAln(t *testing.T) {
 	bg := []float64{0.2, 0.3, 0.3, 0.2}
 	ml1 := LoadMotifFile("../data/M3624_1.02.txt")
@@ -108,7 +115,7 @@ func TestMotifAln(t *testing.T) {
 	score, offset := MotifJsAln(ml1.Pwm, ml2.Pwm, bg)
 	t.Log(score, offset)
 }
-
+*/
 func TestMotifAln2(t *testing.T) {
 	bg := []float64{0.2, 0.3, 0.3, 0.2}
 	t.Log(m1)
@@ -119,4 +126,15 @@ func TestMotifAln2(t *testing.T) {
 	t.Log(MotifJsAlnReport(m2, m1, bg))
 	t.Log(MotifJsAlnReport(m1, m2, bg))
 	t.Log(score, offset)
+}
+
+func TestReadEncode(t *testing.T) {
+	motifs, err := ReadEncodeMotifs("http://compbio.mit.edu/encode-motifs/motifs.txt")
+	if err != nil {
+		t.Error(err)
+	}
+
+	for _, v := range motifs {
+		fmt.Println(v.TxtEncode())
+	}
 }
