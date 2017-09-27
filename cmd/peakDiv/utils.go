@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+type Beds map[string][]BedI
+
 type BedLine struct {
 	chr   string
 	start int

@@ -2,19 +2,15 @@ package main
 
 import "sort"
 
-type BED3 struct {
-	chr   string
+type RangeI struct {
 	start int
 	end   int
 }
 
-func (b *BED3) Chr() string {
-	return b.chr
-}
-func (b *BED3) Start() int {
+func (b *RangeI) Start() int {
 	return b.start
 }
-func (b *BED3) End() int {
+func (b *RangeI) End() int {
 	return b.end
 }
 
@@ -46,31 +42,30 @@ func (c codes) Less(i, j int) bool {
 	return false
 }
 
-func unionLength(beds []BedI) int {
+func unionLength(beds []RangeI) int {
 	l := 0
 	for v := range union(beds) {
 		l += v.End() - v.Start()
 	}
 	return l
 }
-func overlapLength(beds []BedI) int {
+func overlapLength(beds []RangeI) int {
 	l := 0
 	for v := range overlap(beds) {
 		l += v.End() - v.Start()
 	}
 	return l
 }
-func union(beds []BedI) <-chan *BED3 {
+func union(beds []RangeI) <-chan RangeI {
 	return mergeBed(beds, 0)
 }
-func overlap(beds []BedI) <-chan *BED3 {
+func overlap(beds []RangeI) <-chan RangeI {
 	return mergeBed(beds, 1)
 }
 
 /* mergeBed with same chr */
-func mergeBed(beds []BedI, cutoff int) <-chan *BED3 {
-	ch := make(chan *BED3)
-	chr := beds[0].Chr()
+func mergeBed(beds []RangeI, cutoff int) <-chan RangeI {
+	ch := make(chan RangeI)
 	l := make([]code, len(beds)*2)
 	for i, v := range beds {
 		l[2*i] = code{v.Start(), 1}
@@ -87,7 +82,7 @@ func mergeBed(beds []BedI, cutoff int) <-chan *BED3 {
 			state = state + v.code
 			if toggle && state == cutoff {
 				if lastPos != v.pos {
-					ch <- &BED3{chr, lastPos, v.pos}
+					ch <- RangeI{lastPos, v.pos}
 				}
 				toggle = false
 			} else if !toggle && state > cutoff {
