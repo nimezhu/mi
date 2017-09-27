@@ -47,7 +47,7 @@ func (c codes) Less(i, j int) bool {
 }
 
 /* mergeBed with same chr */
-func mergeBed(beds []BED3, cutoff int) <-chan *BED3 {
+func mergeBed(beds []BedI, cutoff int) <-chan *BED3 {
 	ch := make(chan *BED3)
 	chr := beds[0].Chr()
 	l := make([]code, len(beds)*2)
