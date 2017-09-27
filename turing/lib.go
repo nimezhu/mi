@@ -1,4 +1,4 @@
-package main
+package turing
 
 import "sort"
 
@@ -16,7 +16,7 @@ func (b *RangeI) End() int {
 
 type code struct {
 	pos  int
-	code int
+	code int8
 }
 type codes []code
 
@@ -42,14 +42,14 @@ func (c codes) Less(i, j int) bool {
 	return false
 }
 
-func unionLength(beds []RangeI) int {
+func UnionLength(beds []RangeI) int {
 	l := 0
 	for v := range union(beds) {
 		l += v.End() - v.Start()
 	}
 	return l
 }
-func overlapLength(beds []RangeI) int {
+func OverlapLength(beds []RangeI) int {
 	l := 0
 	for v := range overlap(beds) {
 		l += v.End() - v.Start()
@@ -79,7 +79,7 @@ func mergeRange(beds []RangeI, cutoff int) <-chan RangeI {
 	go func() {
 		defer close(ch)
 		for _, v := range l {
-			state = state + v.code
+			state = state + int(v.code)
 			if toggle && state == cutoff {
 				if lastPos != v.pos {
 					ch <- RangeI{lastPos, v.pos}
@@ -93,4 +93,8 @@ func mergeRange(beds []RangeI, cutoff int) <-chan RangeI {
 	}()
 	return ch
 
+}
+
+func NewRangeI(s, e int) RangeI {
+	return RangeI{s, e}
 }

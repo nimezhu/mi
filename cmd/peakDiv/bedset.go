@@ -4,15 +4,16 @@ import (
 	"path"
 	"strings"
 
+	"github.com/nimezhu/mi/turing"
 	"github.com/nimezhu/netio"
 )
 
-type BedMap map[string][]RangeI
+type BedMap map[string][]turing.RangeI
 
 func ReadBedFile(fn string) BedMap {
 	ext := path.Ext(fn)
 	count := make(map[string]int)
-	bMap := make(map[string][]RangeI)
+	bMap := make(map[string][]turing.RangeI)
 	var b []BedLine
 	if ext == ".gz" || ext == ".bed" {
 		//log.Println("Processing", m)
@@ -32,13 +33,13 @@ func ReadBedFile(fn string) BedMap {
 		}
 	}
 	for k, v := range count {
-		bMap[k] = make([]RangeI, v)
+		bMap[k] = make([]turing.RangeI, v)
 		count[k] = 0
 	}
 	for _, bed := range b {
 		k := bed.Chr()
 		v, _ := count[k]
-		bMap[k][v] = RangeI{bed.Start(), bed.End()}
+		bMap[k][v] = turing.NewRangeI(bed.Start(), bed.End())
 		count[k]++
 	}
 	return bMap
@@ -60,13 +61,13 @@ func JaccardIndex(a BedMap, b BedMap) float64 {
 	overlap := 0
 	for k, v := range chrs {
 		if v == 1 {
-			union += unionLength(a[k])
+			union += turing.UnionLength(a[k])
 		}
 		if v == 2 {
-			union += unionLength(b[k])
+			union += turing.UnionLength(b[k])
 		}
 		if v == 3 {
-			c := make([]RangeI, len(a[k])+len(b[k]))
+			c := make([]turing.RangeI, len(a[k])+len(b[k]))
 			for i, v := range a[k] {
 				c[i] = v
 			}
@@ -74,8 +75,8 @@ func JaccardIndex(a BedMap, b BedMap) float64 {
 			for i, v := range b[k] {
 				c[i+l] = v
 			}
-			overlap += overlapLength(c)
-			union += unionLength(c)
+			overlap += turing.OverlapLength(c)
+			union += turing.UnionLength(c)
 
 		}
 	}
