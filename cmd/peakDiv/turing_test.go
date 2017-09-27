@@ -13,7 +13,11 @@ func TestMergeBed(t *testing.T) {
 	a[3] = &BED3{"chr1", 100, 200}
 	a[4] = &BED3{"chr1", 200, 320}
 	a[5] = &BED3{"chr1", 380, 500}
-	b := []BedI{a[0], a[1], a[2], a[3], a[4], a[5]}
+	b := make([]BedI, 6)
+	for i, v := range a {
+		b[i] = v
+	}
+	//b := []BedI{a[0], a[1], a[2], a[3], a[4], a[5]}
 	fmt.Println("union")
 	for v := range mergeBed(b, 0) {
 		fmt.Println(v)
