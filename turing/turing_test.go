@@ -28,3 +28,20 @@ func TestMergeBed(t *testing.T) {
 	}
 
 }
+func TestCodes(t *testing.T) {
+	c1 := []Code{Code{1, 1}, Code{200, -1}, Code{250, 1}, Code{300, -1}}
+	c2 := []Code{Code{150, 1}, Code{270, -1}}
+	for i := range mergeCodes(c1, c2, 1) {
+		t.Log(i)
+	}
+	for i := range mergeCodes(c1, c2, 0) {
+		t.Log(i)
+	}
+}
+func TestReader(t *testing.T) {
+	f1 := ReadBedFileToTuringMap("../cmd/peakDiv/ENCFF001UJP.bed.gz")
+	f2 := ReadBedFileToTuringMap("../cmd/peakDiv/ENCFF001UJQ.bed.gz")
+	for i := range mergeCodes(f1["chr1"], f2["chr1"], 1) {
+		t.Log(i)
+	}
+}

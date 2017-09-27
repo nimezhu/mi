@@ -7,6 +7,8 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	T "github.com/nimezhu/mi/turing"
 )
 
 func main() {
@@ -26,11 +28,11 @@ func main() {
 		}
 	}
 	l := len(bedFiles)
-	bedMap := make([]BedMap, l)
+	bedMap := make([]T.TuringMap, l)
 	ids := make([]string, l)
 	arr := make([]float64, l*l)
 	for i, f := range bedFiles {
-		bedMap[i] = ReadBedFile(f)
+		bedMap[i] = T.ReadBedFileToTuringMap(f)
 		n := strings.Replace(f, ".gz", "", -1)
 		ids[i] = strings.Replace(n, ".bed", "", -1)
 		if i%10 == 0 {
@@ -41,12 +43,12 @@ func main() {
 		arr[i*l+i] = float64(1.0)
 		log.Printf("calc %d %s\n", i, ids[i])
 		//ba := ReadBedFile(bedFiles[i])
-		for j := i + 1; j < l; j++ {
+		for j := i; j < l; j++ {
 			//bb := ReadBedFile(bedFiles[j])
 			if j%10 == 0 {
 				log.Printf("%d ", j)
 			}
-			f := JaccardIndex(bedMap[i], bedMap[j])
+			f := T.JI(bedMap[i], bedMap[j])
 			arr[i*l+j] = f
 			arr[j*l+i] = f
 

@@ -14,29 +14,32 @@ func (b *RangeI) End() int {
 	return b.end
 }
 
-type code struct {
-	pos  int
-	code int8
+type Code struct {
+	Pos  int
+	Code int
 }
-type codes []code
+type Codes []Code
 
-func (c codes) Swap(i, j int) {
+func (c Codes) Swap(i, j int) {
 	c[i], c[j] = c[j], c[i]
 }
-func (c codes) Len() int {
+func (c Codes) Len() int {
 	return len(c)
 }
-func (c codes) Less(i, j int) bool {
-	if c[i].pos < c[j].pos {
+func (c Codes) Less(i, j int) bool {
+	return less(c[i], c[j])
+}
+func less(a Code, b Code) bool {
+	if a.Pos < b.Pos {
 		return true
 	}
-	if c[i].pos > c[j].pos {
+	if a.Pos > b.Pos {
 		return false
 	}
-	if c[i].code > c[j].code {
+	if a.Code > b.Code {
 		return true
 	}
-	if c[i].code < c[j].code {
+	if a.Code < b.Code {
 		return false
 	}
 	return false
@@ -66,27 +69,30 @@ func overlap(beds []RangeI) <-chan RangeI {
 /* mergeBed with same chr */
 func mergeRange(beds []RangeI, cutoff int) <-chan RangeI {
 	ch := make(chan RangeI)
-	l := make([]code, len(beds)*2)
+	l := make([]Code, len(beds)*2)
 	for i, v := range beds {
-		l[2*i] = code{v.Start(), 1}
-		l[2*i+1] = code{v.End(), -1}
+		l[2*i] = Code{v.Start(), 1}
+		l[2*i+1] = Code{v.End(), -1}
 	}
-	sort.Sort(codes(l))
-	//start := l[0].pos
-	lastPos := l[0].pos
+	sort.Sort(Codes(l))
+	//start := l[0].Pos
+	lastPos := l[0].Pos
 	state := 0
-	toggle := true
+	toggle := false
+	if state > cutoff {
+		toggle = true
+	}
 	go func() {
 		defer close(ch)
 		for _, v := range l {
-			state = state + int(v.code)
+			state = state + int(v.Code)
 			if toggle && state == cutoff {
-				if lastPos != v.pos {
-					ch <- RangeI{lastPos, v.pos}
+				if lastPos != v.Pos {
+					ch <- RangeI{lastPos, v.Pos}
 				}
 				toggle = false
 			} else if !toggle && state > cutoff {
-				lastPos = v.pos
+				lastPos = v.Pos
 				toggle = true
 			}
 		}
