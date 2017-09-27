@@ -15,15 +15,15 @@ func TestMergeBed(t *testing.T) {
 	a[5] = RangeI{380, 500}
 
 	fmt.Println("union")
-	for v := range mergeBed(a, 0) {
+	for v := range mergeRange(a, 0) {
 		fmt.Println(v)
 	}
 	fmt.Println("overlap")
-	for v := range mergeBed(a, 1) {
+	for v := range mergeRange(a, 1) {
 		fmt.Println(v)
 	}
 	fmt.Println("overlap2")
-	for v := range mergeBed(a, 2) {
+	for v := range mergeRange(a, 2) {
 		fmt.Println(v)
 	}
 

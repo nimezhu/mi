@@ -57,14 +57,14 @@ func overlapLength(beds []RangeI) int {
 	return l
 }
 func union(beds []RangeI) <-chan RangeI {
-	return mergeBed(beds, 0)
+	return mergeRange(beds, 0)
 }
 func overlap(beds []RangeI) <-chan RangeI {
-	return mergeBed(beds, 1)
+	return mergeRange(beds, 1)
 }
 
 /* mergeBed with same chr */
-func mergeBed(beds []RangeI, cutoff int) <-chan RangeI {
+func mergeRange(beds []RangeI, cutoff int) <-chan RangeI {
 	ch := make(chan RangeI)
 	l := make([]code, len(beds)*2)
 	for i, v := range beds {
