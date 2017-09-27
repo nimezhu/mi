@@ -46,6 +46,27 @@ func (c codes) Less(i, j int) bool {
 	return false
 }
 
+func unionLength(beds []BedI) int {
+	l := 0
+	for v := range union(beds) {
+		l += v.End() - v.Start()
+	}
+	return l
+}
+func overlapLength(beds []BedI) int {
+	l := 0
+	for v := range overlap(beds) {
+		l += v.End() - v.Start()
+	}
+	return l
+}
+func union(beds []BedI) <-chan *BED3 {
+	return mergeBed(beds, 0)
+}
+func overlap(beds []BedI) <-chan *BED3 {
+	return mergeBed(beds, 1)
+}
+
 /* mergeBed with same chr */
 func mergeBed(beds []BedI, cutoff int) <-chan *BED3 {
 	ch := make(chan *BED3)
