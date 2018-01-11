@@ -1,12 +1,12 @@
 package turing
 
 import (
-	"path"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
 
-	"github.com/nimezhu/netio"
+	"github.com/nimezhu/bed2x"
 )
 
 type Beds map[string][]BedI
@@ -70,31 +70,29 @@ func parseBed(line string) BedLine {
 type TuringMap map[string][]Code //Code Need to be Sorted
 
 func ReadBedFileToTuringMap(fn string) TuringMap {
-	ext := path.Ext(fn)
+	iter, err := bed2x.IterBed12(fn)
+	//	ext := path.Ext(fn)
 	count := make(map[string]int)
 	bMap := make(map[string][]Code)
-	var b []BedLine
-	if ext == ".gz" || ext == ".bed" {
-		a, _ := netio.ReadAll(fn)
-		arr := strings.Split(string(a), "\n")
-		b = make([]BedLine, len(arr)-1) //TODO
-		for i, v := range arr {
-			if v == "" {
-				continue
-			}
-			b[i] = parseBed(v)
-			if _, ok := count[b[i].Chr()]; ok {
-				count[b[i].Chr()]++
-			} else {
-				count[b[i].Chr()] = 1
-			}
+	beds := make([]*bed2x.Bed12, 0, 0)
+
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	for b := range iter {
+		if _, ok := count[b.Chr()]; ok {
+			count[b.Chr()]++
+		} else {
+			count[b.Chr()] = 1
 		}
+		beds = append(beds, b)
 	}
 	for k, v := range count {
 		bMap[k] = make([]Code, v*2)
 		count[k] = 0
 	}
-	for _, bed := range b {
+	for _, bed := range beds {
 		k := bed.Chr()
 		v, _ := count[k]
 		bMap[k][v] = Code{bed.Start(), 1}
@@ -102,7 +100,7 @@ func ReadBedFileToTuringMap(fn string) TuringMap {
 		bMap[k][v+1] = Code{bed.End(), -1}
 		count[k]++
 	}
-	for k, _ := range count {
+	for k := range count {
 		sort.Sort(Codes(bMap[k]))
 	}
 	return bMap

@@ -23,7 +23,7 @@ func main() {
 	for _, f := range files {
 		m := f.Name()
 		ext := path.Ext(m)
-		if ext == ".bed" || ext == ".gz" {
+		if ext == ".bed" || ext == ".gz" || ext == ".bigBed" || ext == ".bb" {
 			bedFiles = append(bedFiles, f.Name())
 		}
 	}
